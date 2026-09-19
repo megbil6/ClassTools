@@ -2,9 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>اختبار الخطوط</title>
+<title>عجلة الحظ - أدوات الفصل</title>
 <style>
-    /* عرّف خطك هنا - غيّر المسارات لتطابق مجلد fonts عندك */
     @font-face {
         font-family: 'MyFont';
         src: url('fonts/fontR.otf') format('opentype');
@@ -16,79 +15,836 @@
         font-weight: 700;
     }
 
+    * { box-sizing: border-box; }
+
+    :root {
+        --bg: #FFFCF3;
+        --yellow: #FFD34D;
+        --coral: #FF6B57;
+        --teal: #2EC4B6;
+        --purple: #7B5EA7;
+        --ink: #2B2640;
+        --card: #FFFFFF;
+        --border: #EFE6C8;
+    }
+
     body {
-        background-color: #1e1e2f;
-        color: white;
-        padding: 40px;
+        font-family: 'MyFont', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 400;
+        background: var(--bg);
+        color: var(--ink);
+        margin: 0;
+        padding: 12px 20px;
+        height: 100vh;
+        overflow-x: hidden;
+        transition: background 0.3s;
+    }
+
+    /* وضع   التركيز */
+    body.focus-mode {
+        background: #1A1824;
+        color: #FFF;
+    }
+    body.focus-mode header h1 { color: #FFF; }
+    body.focus-mode .panel-left, 
+    body.focus-mode .hide-in-focus {
+        display: none !important;
+    }
+    body.focus-mode .panel-right {
+        flex: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+        transform: scale(1.35) translateY(45px);
+        transition: transform 0.4s ease;
+    }
+
+    h1, h2, .title-font { font-feature-settings: "salt" on; }
+    .important { font-weight: 700; }
+
+    header {
         text-align: center;
-    }
-
-    .box {
-        max-width: 700px;
-        margin: 30px auto;
-        padding: 25px;
-        border-radius: 12px;
-        background-color: #2a2a40;
-    }
-
-    .label {
-        font-size: 14px;
-        color: #ffcc00;
         margin-bottom: 10px;
-        font-family: Arial, sans-serif;
+        position: relative;
     }
 
-    /* القسم الأول: الخط الافتراضي (بدون تخصيص) */
-    .default-font {
-        font-size: 32px;
+    header h1 {
+        font-size: 26px;
+        margin: 0;
+        color: var(--purple);
     }
 
-    /* القسم الثاني: الخط المخصص - عادي */
-    .custom-font-regular {
+    .top-controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        gap: 8px;
+    }
+
+    .layout {
+        display: flex;
+        gap: 16px;
+        max-width: 1200px;
+        margin: 0 auto;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+    }
+
+    .panel {
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        padding: 12px 16px;
+        box-shadow: 0 3px 0 var(--border);
+        transition: all 0.3s;
+    }
+
+    .panel-right { flex: 2; text-align: center; }
+    .panel-left { flex: 1; max-width: 320px; display: flex; flex-direction: column; gap: 10px; }
+
+    .row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+    }
+
+    select, button, input[type="file"] {
         font-family: 'MyFont', sans-serif;
-        font-weight: 400;
-        font-size: 32px;
+        font-size: 14px;
+        border-radius: 10px;
+        border: 2px solid var(--border);
+        padding: 6px 12px;
+        background: white;
+        cursor: pointer;
+        outline: none;
     }
 
-    /* القسم الثالث: الخط المخصص - عريض */
-    .custom-font-bold {
-        font-family: 'MyFont', sans-serif;
+    button {
+        border: none;
+        color: white;
         font-weight: 700;
-        font-size: 32px;
+        transition: transform 0.1s, opacity 0.2s;
+    }
+    button:active { transform: scale(0.96); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-main { background: var(--coral); }
+    .btn-secondary { background: var(--teal); }
+    .btn-purple { background: var(--purple); }
+    .btn-mute { background: var(--yellow); color: var(--ink); border: none; box-shadow: 0 2px 0 #E5B933; padding: 6px 10px; }
+    .btn-focus { background: var(--ink); color: white; border: none; box-shadow: 0 2px 0 #000; padding: 6px 10px; }
+    .btn-danger { background: #E63946; }
+    .btn-small { padding: 5px 8px; font-size: 12px; border-radius: 8px; }
+
+    /* العجلة */
+    .wheel-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 4px 0 10px;
     }
 
-    /* القسم الرابع: الخط المخصص - ستايل ممدود (salt) */
-    .custom-font-extended {
-        font-family: 'MyFont', sans-serif;
-        font-weight: 400;
-        font-size: 32px;
-        font-feature-settings: "salt" on;
+    .wheel-viewport {
+        width: 360px;
+        height: 360px;
+        max-width: 100%;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 2px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 5px var(--purple), 0 6px 18px rgba(0,0,0,0.12);
     }
+
+    .wheel-disc {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        position: absolute;
+        top: 0; left: 0;
+        transform-origin: 50% 50%;
+        transition: transform 3.8s cubic-bezier(0.15, 0.85, 0.2, 1);
+    }
+
+    .wheel-disc span {
+        position: absolute;
+        text-align: center;
+        font-weight: 700;
+        color: white;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        pointer-events: none;
+    }
+
+    .pointer {
+        width: 0; height: 0;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-top: 22px solid var(--ink);
+        margin-top: -6px;
+        position: relative;
+        z-index: 10;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+    }
+
+    .winner-box {
+        min-height: 56px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+        color: #FFFFFF;
+        background: linear-gradient(135deg, var(--purple), #9B7ED9);
+        border: 2px solid #5C4A8A;
+        border-radius: 14px;
+        padding: 8px 16px;
+        margin: 10px auto 0;
+        text-align: center;
+        max-width: 460px;
+        box-shadow: 0 4px 0 #5C4A8A;
+        transition: all 0.3s;
+    }
+
+    .winner-box.team-mode {
+        background: linear-gradient(135deg, var(--teal), #48D6C9);
+        border-color: #219B8F;
+        box-shadow: 0 4px 0 #219B8F;
+        font-size: 20px;
+    }
+
+    .finished-msg {
+        background: #FFE5E0;
+        border: 2px dashed var(--coral);
+        border-radius: 10px;
+        padding: 8px;
+        text-align: center;
+        margin-top: 6px;
+        display: none;
+    }
+
+    .absent-box {
+        background: #F7F5FF;
+        border-radius: 10px;
+        padding: 8px;
+        max-height: 110px;
+        overflow-y: auto;
+        font-size: 13px;
+        text-align: right;
+    }
+    .absent-box label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 0;
+    }
+
+    .side-section { padding: 10px 12px; }
+    .side-section h2 { font-size: 15px; margin: 0 0 6px; color: var(--teal); }
+
+    .history-list {
+        list-style: none; margin: 0; padding: 0;
+        max-height: 120px; overflow-y: auto; text-align: right;
+    }
+    .history-list li {
+        display: flex; justify-content: space-between; align-items: center;
+        background: #FBFAF3; border-radius: 8px; padding: 5px 8px;
+        margin-bottom: 4px; font-size: 13px;
+    }
+    .history-list .del-btn {
+        background: none; border: none; color: #E63946;
+        font-size: 14px; padding: 0 4px; font-weight: 700;
+    }
+
+    .quick-result, .task-result {
+        margin-top: 6px; background: #EFFAF8; border-radius: 8px;
+        padding: 6px; text-align: center; font-weight: 700; font-size: 13px; min-height: 16px;
+    }
+    
+    .db-status-text { font-size: 12px; color: #888; margin-top: 2px; }
+
 </style>
 </head>
 <body>
 
-    <h1 style="font-family: Arial, sans-serif;">🔤 صفحة اختبار الخطوط</h1>
+<header>
+    <h1>🎡 عجلة الحظ</h1>
+    <div class="top-controls">
+        <button class="btn-mute" id="muteBtn" title="صوت">🔊</button>
+        <button class="btn-focus" id="focusBtn" title="وضع التركيز">🎯</button>
+    </div>
+</header>
 
-    <div class="box">
-        <div class="label">1) الخط الافتراضي (بدون أي تخصيص)</div>
-        <div class="default-font">مرحبًا بكم في الفصل السادس الابتدائي</div>
+<div class="layout">
+    <!-- الجزء الأيمن: العجلة الرئيسية -->
+    <div class="panel panel-right">
+
+        <div class="row hide-in-focus" id="csvFileWrapper">
+            <!-- إخفاء زر الرفع الأصلي واستبداله بزر مخصص أنيق -->
+<label for="csvFile" class="btn-secondary" style="display: inline-block; cursor: pointer;">
+    📁 ارفع ملف الأسماء CSV
+</label>
+<input type="file" id="csvFile" accept=".csv" style="display: none;">
+            
+        </div>
+        <div class="db-status-text hide-in-focus" id="dbStatus">بانتظار رفع ملف الطلاب...</div>
+
+        <div class="row hide-in-focus" style="margin-top: 6px;">
+            <select id="classSelect">
+                <option value="">اختر الفصل...</option>
+            </select>
+            <button class="btn-purple btn-small" id="toggleAbsentBtn">استبعاد طالب غائب</button>
+        </div>
+
+        <div class="absent-box hide-in-focus" id="absentBox" style="display:none;"></div>
+
+        <div class="wheel-wrap">
+            <div class="pointer"></div>
+            <div class="wheel-viewport">
+                <div class="wheel-disc" id="wheelDisc"></div>
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-top:12px; align-items: center;">
+                <button class="btn-main" id="spinBtn" style="font-size:18px; padding:8px 24px;">🎡 اسحب اسم</button>
+                
+                <div style="display:flex; align-items:center; background:#EFE6C8; border-radius:10px; padding:2px 6px;">
+                    <button class="btn-secondary" id="teamPickBtn" style="font-size:15px; padding:8px 14px;">👥 سحب مجموعة</button>
+                    <select id="teamSizeSelect" style="border:none; background:transparent; padding:4px; font-weight:700; color:var(--ink);" title="عدد أفراد المجموعة">
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="4" >4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="winner-box" id="winnerBox">ارفع قاعدة البيانات للبدء</div>
+
+        <div class="finished-msg" id="finishedMsg">
+            <p class="important" style="margin:0 0 6px;">🎉 خلصت كل أسماء هذا الفصل!</p>
+            <button class="btn-secondary btn-small" id="newRoundBtn">ابدأ جولة جديدة</button>
+        </div>
     </div>
 
-    <div class="box">
-        <div class="label">2) الخط المخصص - عادي (Regular)</div>
-        <div class="custom-font-regular">مرحبًا بكم في الفصل السادس الابتدائي</div>
-    </div>
+    <!-- الجزء الأيسر -->
+    <div class="panel-left">
+        <div class="panel side-section">
+            <h2>📜 سجل الجلسة</h2>
+            <ul class="history-list" id="historyList"></ul>
+        </div>
 
-    <div class="box">
-        <div class="label">3) الخط المخصص - عريض (Bold)</div>
-        <div class="custom-font-bold">مرحبًا بكم في الفصل السادس الابتدائي</div>
-    </div>
+        <div class="panel side-section">
+            <h2>🎲 اختيار عشوائي سريع</h2>
+            <button class="btn-secondary" id="quickPickBtn" style="width:100%; padding:6px;">اختر طالب عشوائي</button>
+            <div class="quick-result" id="quickResult"></div>
+        </div>
 
-    <div class="box">
-        <div class="label">4) الخط المخصص - ستايل ممدود (salt)</div>
-        <div class="custom-font-extended">مرحبًا بكم في الفصل السادس الابتدائي</div>
+        <div class="panel side-section">
+            <h2>✨ مهمة عشوائية خفيفة</h2>
+            <button class="btn-purple" id="taskBtn" style="width:100%; padding:6px;">اختر مهمة</button>
+            <div class="task-result" id="taskResult"></div>
+        </div>
+
+        <div class="panel side-section">
+            <button class="btn-danger" id="resetBtn" style="width:100%; padding:6px;">بدء جلسة جديدة ✨</button>
+        </div>
     </div>
+</div>
+
+<script>
+/* ================== البيانات الثابتة ================== */
+const TASKS = [
+    // --- مراجعة وربط بالدرس (تعلم ممتع) ---
+    "اذكر معلومة واحدة تعلمتها اليوم بأسلوب 'مذيع الأخبار'",
+    "اشرح المفهوم الأخير في الدرس لزميلك بأسلوب 'الهمس'",
+    "اعطنا مثالاً واقعياً من حياتك اليومية يطبق درس اليوم",
+    "اطرح سؤالاً ذكياً على الفصل حول موضوع حصة اليوم",
+    "اقترح فكرة ذكية لتطوير طريقة شرح درس اليوم",
+    "المس شيئاً في الغرفة الصفية له علاقة بموضوع الدرس",
+    "ملخص الدرس في 3 كلمات فقط.. تتحداك؟",
+    "اذكر مصطلحاً من درس اليوم واطلب من زميلك تعريفه",
+    "اعطنا نصيحة سريعة لزملائك تساعدهم على فهم درس اليوم",
+    "ارسم شكلاً أو رمزاً سريعاً على السبورة يعبر عن الدرس",
+
+    // --- تفاعل إيجابي وبناء روح الفريق ---
+    "وجه تحية حماسية خاصة لجميع طلاب الفصل",
+    "امدح زميلك الجالس على يسارك بصفة ممتازة فيه",
+    "اختر طالباً ووجه له 'مصافحة مبتكرة' بدون كلام",
+    "قل كلمة تشجيعية لطالب ترى أنه بذل جهداً اليوم",
+    "اذكر شيئاً واحداً تحبه وتفضله في فصلكم هذا",
+    "ابتسم في وجه 3 من زملائك وادعُ لهم بدعوة صادقة",
+    "شجع الفريق أو الطاولة المجاورة لك بعبارة حماسية",
+    "اصنع 'علامة إعجاب' أو حركة تقدير لمعلمك ولزملائك",
+
+    // --- نشاط حركي خفيف وتنفيذي (تجديد الطاقة) ---
+    "قم بعمل حركة احتفالية سريعة تعبر عن الفوز",
+    "اعمل 5 قفزات خفيفة في مكانك ثم ابتسم بثقة",
+    "قف وخذ نفساً عميقاً جداً ثم أخرجه ببطء (3 مرات)",
+    "عد من 10 إلى 1 بالعكس وبسرعة دون خطأ",
+    "مثّل مهنة ترتبط بدرس اليوم بأسلوب 'التمثيل الصامت'",
+    "عدل جلستك وافرك يديك بحماس واستعد للسؤال القادم",
+    "قم بتمطيط ذراعيك للأعلى لمدة 5 ثوانٍ لتجديد نشاطك",
+
+    // --- ذكاء وتحديات تفكير سريع ---
+    "اذكر 3 كلمات تبدأ بنفس الحرف الأول من اسمك",
+    "اذكر اسم بلد يبدأ بآخر حرف من اسمك",
+    "اذكر أطول كلمة عربية تحفظها حتى الآن",
+    "اعطنا كلمة وعكسها في أقل من 3 ثوانٍ",
+    "اختر رقماً من 1 إلى 10 واسأل المعلم سؤالاً بهذا الرقم",
+    "قل جُملة واحدة مفيدة بشرط ألا تحتوي على حرف 'الألف'",
+    "اذكر فائدة واحدة للقراءة أو التعلم اليومي",
+    "سمّ 3 أشياء تراها أمامك الآن تبدأ بحرف 'الميم'",
+
+    // --- مواهب وتعبير عن النفس ---
+    "اعطنا إلقاءً حماسياً لبيت شعر أو نشيد تحفظه",
+    "عَبّر عن حماسك لدرس اليوم بحركة واحدة فقط",
+    "اذكر مهنتك المستقبلية التي تطمح للوصول إليها",
+    "ارسم إيموجي يعبر عن شعورك الآن في الهواء بيدك",
+    "اقترح اسم بديل ومضحك للمادة الدراسية اليوم",
+    "قل حكمة أو نصيحة قصيرة تعلمتها من والديك",
+    "صف يومك الدراسي حتى الآن بكلمة واحدة فقط"
+];
+
+const SLICE_COLORS = ["#FF6B57","#FFD34D","#2EC4B6","#7B5EA7","#4CC9F0","#F72585","#FF9F1C","#06D6A0"];
+
+/* ================== المتغيرات ================== */
+let studentsDB = {};      
+let session = { removed: {}, excluded: {}, history: [] };
+let muted = false;
+let isFocusMode = false;
+let audioCtx = null;
+let spinTimer = null;
+
+const DB_KEY = "wheel_students_db";
+const SESSION_KEY = "wheel_session_state";
+
+/* ================== إدارة ملف CSV ================== */
+document.getElementById("csvFile").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+        let text = evt.target.result;
+        text = text.replace(/^\uFEFF/, ""); 
+        const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+        const newDB = {};
+        for (let i = 1; i < lines.length; i++) {
+            let parts = lines[i].split(";");
+            if (parts.length < 2 && lines[i].includes(",")) parts = lines[i].split(",");
+            if (parts.length < 2) continue;
+            
+            const name = parts[0].trim();
+            const cls = parts[1].trim();
+            if (!name || !cls) continue;
+            
+            if (!newDB[cls]) newDB[cls] = [];
+            newDB[cls].push(name);
+        }
+        studentsDB = newDB;
+        localStorage.setItem(DB_KEY, JSON.stringify(studentsDB));
+        document.getElementById("dbStatus").innerHTML = "تم تحديث الأسماء بنجاح ✅";
+        populateClassSelect();
+        document.getElementById("winnerBox").textContent = "اختر فصلاً وابدأ الدوران";
+    };
+    reader.readAsText(file, "UTF-8");
+});
+
+function loadInitialDB() {
+    const db = localStorage.getItem(DB_KEY);
+    if (db) {
+        studentsDB = JSON.parse(db);
+        document.getElementById('dbStatus').innerHTML = "تم استرجاع الأسماء المحفوظة مسبقاً ✅";
+        populateClassSelect();
+        document.getElementById("winnerBox").textContent = "اختر فصلاً وابدأ الدوران";
+    }
+}
+
+function loadSession() {
+    const sess = localStorage.getItem(SESSION_KEY);
+    if (sess) session = JSON.parse(sess);
+    renderHistory();
+}
+
+function saveSession() {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function populateClassSelect() {
+    const sel = document.getElementById("classSelect");
+    const current = sel.value;
+    sel.innerHTML = '<option value="">اختر الفصل...</option>';
+    Object.keys(studentsDB).sort((a,b)=>a-b).forEach(cls => {
+        const opt = document.createElement("option");
+        opt.value = cls;
+        opt.textContent = "فصل " + cls;
+        sel.appendChild(opt);
+    });
+    if (current && studentsDB[current]) sel.value = current;
+    drawWheel();
+}
+
+function remainingNames(cls) {
+    const all = studentsDB[cls] || [];
+    const removed = session.removed[cls] || [];
+    const excluded = session.excluded[cls] || [];
+    return all.filter(n => !removed.includes(n) && !excluded.includes(n));
+}
+
+function shortName(fullName) {
+    return fullName.trim().split(/\s+/).slice(0, 2).join(" ");
+}
+
+/* ================== رسم العجلة ================== */
+let currentSliceNames = [];
+let currentRotation = 0;
+
+function drawWheel() {
+    const cls = document.getElementById("classSelect").value;
+    const disc = document.getElementById("wheelDisc");
+    disc.innerHTML = "";
+    document.getElementById("finishedMsg").style.display = "none";
+
+    if (!cls) {
+        disc.style.background = "#EEE";
+        currentSliceNames = [];
+        return;
+    }
+
+    const names = remainingNames(cls);
+
+    if (names.length === 0) {
+        disc.style.background = "#EEE";
+        currentSliceNames = [];
+        document.getElementById("finishedMsg").style.display = "block";
+        return;
+    }
+
+    currentSliceNames = [...names].sort(() => Math.random() - 0.5);
+    const n = currentSliceNames.length;
+    const sliceAngle = 360 / n;
+    
+    let gradientParts = [];
+    for (let i = 0; i < n; i++) {
+        const color = SLICE_COLORS[i % SLICE_COLORS.length];
+        gradientParts.push(color + " " + (i*sliceAngle) + "deg " + ((i+1)*sliceAngle) + "deg");
+    }
+    disc.style.background = "conic-gradient(" + gradientParts.join(",") + ")";
+
+    //const fontSize = n <= 6 ? 16 : (n <= 9 ? 14 : (n <= 14 ? 12 : (n <= 20 ? 10 : 8)));
+    const fontSize = n <= 6 ? 20 : (n <= 9 ? 18 : (n <= 14 ? 15 : (n <= 20 ? 13 : 13)));
+    const radius = 130; // ضبط البعد مع مقاس العجلة 360px
+
+    currentSliceNames.forEach((name, i) => {
+        const mid = (i + 0.5) * sliceAngle; 
+        const angleFromTop = mid * Math.PI / 180;
+        const x = 180 + radius * Math.sin(angleFromTop); // منتصف العجلة 180
+        const y = 180 - radius * Math.cos(angleFromTop);
+
+        const label = document.createElement("span");
+        label.textContent = shortName(name);
+        label.style.fontSize = fontSize + "px";
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        label.style.transform = `translate(-50%, -50%) rotate(${mid + 270}deg)`;
+       
+        
+        disc.appendChild(label);
+    });
+}
+
+/* ================== الصوت ================== */
+function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function playTick() {
+    if (muted) return;
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = 800;
+    gain.gain.value = 0.05;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.03);
+}
+
+document.getElementById("muteBtn").addEventListener("click", () => {
+    muted = !muted;
+    document.getElementById("muteBtn").textContent = muted ? "🔇" : "🔊";
+});
+
+/* ================== تأثير الاحتفالية (Confetti) ================== */
+function fireConfetti() {
+    const count = 70;
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.top = '0'; container.style.left = '0';
+    container.style.width = '100vw'; container.style.height = '100vh';
+    container.style.pointerEvents = 'none';
+    container.style.zIndex = '9999';
+    container.style.overflow = 'hidden';
+    document.body.appendChild(container);
+
+    for(let i = 0; i < count; i++) {
+        const conf = document.createElement('div');
+        conf.style.position = 'absolute';
+        conf.style.width = (Math.random() * 8 + 6) + 'px';
+        conf.style.height = (Math.random() * 14 + 6) + 'px';
+        conf.style.backgroundColor = SLICE_COLORS[Math.floor(Math.random() * SLICE_COLORS.length)];
+        conf.style.left = (Math.random() * 100) + 'vw';
+        conf.style.top = '-20px';
+        
+        const duration = Math.random() * 2 + 2.2;
+        const delay = Math.random() * 0.2;
+        conf.style.transition = `top ${duration}s ease-in ${delay}s, transform ${duration}s linear ${delay}s, opacity ${duration}s ease-in ${delay}s`;
+        
+        container.appendChild(conf);
+        
+        setTimeout(() => {
+            conf.style.top = '100vh';
+            conf.style.transform = `rotate(${Math.random() * 1080}deg) translateX(${Math.random() * 100 - 50}px)`;
+            conf.style.opacity = '0';
+        }, 50);
+    }
+    setTimeout(() => container.remove(), 3500);
+}
+
+/* ================== وضع التركيز ================== */
+document.getElementById("focusBtn").addEventListener("click", () => {
+    isFocusMode = !isFocusMode;
+    document.body.classList.toggle("focus-mode", isFocusMode);
+    document.getElementById("focusBtn").style.background = isFocusMode ? 'var(--coral)' : 'var(--ink)';
+});
+
+/* ================== سحب مجموعة (مرن) ================== */
+document.getElementById("teamPickBtn").addEventListener("click", () => {
+    const cls = document.getElementById("classSelect").value;
+    if (!cls) { alert("اختر الفصل أولاً"); return; }
+    
+    const names = remainingNames(cls);
+    if (names.length === 0) { drawWheel(); return; }
+
+    const targetSize = parseInt(document.getElementById("teamSizeSelect").value) || 4;
+    const count = Math.min(targetSize, names.length);
+    const shuffled = [...names].sort(() => Math.random() - 0.5);
+    const team = shuffled.slice(0, count);
+
+    const winnerBox = document.getElementById("winnerBox");
+    winnerBox.classList.add("team-mode");
+    winnerBox.innerHTML = "⏳ جاري اختيار مجموعة...";
+    document.getElementById("teamPickBtn").disabled = true;
+    document.getElementById("spinBtn").disabled = true;
+
+    setTimeout(() => {
+        if (!session.removed[cls]) session.removed[cls] = [];
+        //let teamText = team.map(n => shortName(n)).join('  •  ');
+        let teamText = team.map((n, idx) => `${idx + 1}. ${n}`).join('  •  ');
+        
+        team.forEach(n => {
+            session.removed[cls].push(n);
+            session.history.push({ name: "👥 " + shortName(n), cls: cls, time: "" });
+        });
+        
+        winnerBox.innerHTML = `<div style="font-size:15px; margin-bottom:3px;">فريق العمل (${count} طلاب):</div> <div>${teamText}</div>`;
+        fireConfetti();
+        saveSession();
+        renderHistory();
+        drawWheel();
+
+        document.getElementById("teamPickBtn").disabled = false;
+        document.getElementById("spinBtn").disabled = false;
+    }, 1000);
+});
+
+/* ================== دوران العجلة العادي ================== */
+document.getElementById("spinBtn").addEventListener("click", () => {
+    const cls = document.getElementById("classSelect").value;
+    if (!cls) { alert("اختر الفصل أولاً"); return; }
+    if (currentSliceNames.length === 0) { drawWheel(); return; }
+
+    const n = currentSliceNames.length;
+    const sliceAngle = 360 / n;
+    const winnerIndex = Math.floor(Math.random() * n);
+    const winnerName = currentSliceNames[winnerIndex];
+
+    const targetMid = (winnerIndex + 0.5) * sliceAngle;
+    const desiredMod = ((360 - targetMid) % 360 + 360) % 360;
+    const currentMod = ((currentRotation % 360) + 360) % 360;
+    
+    let diff = desiredMod - currentMod;
+    if (diff < 0) diff += 360;
+    
+    const fullSpins = 10 * 360;
+    const finalRotation = currentRotation + fullSpins + diff;
+
+    const disc = document.getElementById("wheelDisc");
+    disc.style.transform = `rotate(${finalRotation}deg)`;
+    currentRotation = finalRotation;
+
+    document.getElementById("spinBtn").disabled = true;
+    document.getElementById("teamPickBtn").disabled = true;
+    const winnerBox = document.getElementById("winnerBox");
+    winnerBox.classList.remove("team-mode");
+    winnerBox.textContent = "🎡 العجلة تدور...";
+
+    let ticks = 0;
+    const totalTicks = 42;
+    function scheduleTick() {
+        if (ticks >= totalTicks) return;
+        playTick();
+        ticks++;
+        const progress = ticks / totalTicks;
+        const delay = 30 + (progress * progress * 300); 
+        spinTimer = setTimeout(scheduleTick, delay);
+    }
+    if (spinTimer) clearTimeout(spinTimer);
+    scheduleTick();
+
+    setTimeout(() => {
+        clearTimeout(spinTimer);
+        document.getElementById("spinBtn").disabled = false;
+        document.getElementById("teamPickBtn").disabled = false;
+
+        winnerBox.textContent = "🏆 " + winnerName;
+        fireConfetti(); 
+
+        setTimeout(() => {
+            if (!session.removed[cls]) session.removed[cls] = [];
+            session.removed[cls].push(winnerName);
+            session.history.push({ name: winnerName, cls: cls, time: "" });
+            saveSession();
+            renderHistory();
+            drawWheel();
+        }, 1500); 
+
+    }, 3850);
+});
+
+document.getElementById("classSelect").addEventListener("change", () => {
+    document.getElementById("winnerBox").classList.remove("team-mode");
+    document.getElementById("winnerBox").textContent = "اضغط للبدء";
+    drawWheel();
+    renderAbsentBox();
+    renderHistory();
+});
+
+document.getElementById("newRoundBtn").addEventListener("click", () => {
+    const cls = document.getElementById("classSelect").value;
+    if (!cls) return;
+    session.removed[cls] = [];
+    saveSession();
+    drawWheel();
+});
+
+/* ================== استبعاد الغائبين ================== */
+document.getElementById("toggleAbsentBtn").addEventListener("click", () => {
+    const box = document.getElementById("absentBox");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+    renderAbsentBox();
+});
+
+function renderAbsentBox() {
+    const cls = document.getElementById("classSelect").value;
+    const box = document.getElementById("absentBox");
+    if (!cls) { box.innerHTML = "اختر فصلاً أولاً"; return; }
+    
+    const all = (studentsDB[cls] || []).filter(n => !(session.removed[cls]||[]).includes(n));
+    const excluded = session.excluded[cls] || [];
+    box.innerHTML = "";
+    all.forEach(name => {
+        const label = document.createElement("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = excluded.includes(name);
+        cb.addEventListener("change", () => {
+            if (!session.excluded[cls]) session.excluded[cls] = [];
+            if (cb.checked) session.excluded[cls].push(name);
+            else session.excluded[cls] = session.excluded[cls].filter(n => n !== name);
+            saveSession();
+            drawWheel();
+        });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(shortName(name)));
+        box.appendChild(label);
+    });
+}
+
+/* ================== سجل الجلسة (تحديث التصفير للفصل الحالي) ================== */
+function renderHistory() {
+    const list = document.getElementById("historyList");
+    const cls = document.getElementById("classSelect").value;
+    list.innerHTML = "";
+    
+    const filtered = session.history
+        .map((entry, idx) => ({ entry, idx }))
+        .filter(item => !cls || item.entry.cls === cls);
+
+    filtered.slice().reverse().forEach(({ entry, idx }) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${entry.name}</span>`;
+        const delBtn = document.createElement("button");
+        delBtn.className = "del-btn";
+        delBtn.textContent = "✖";
+        delBtn.title = "إعادة للعجلة";
+        delBtn.addEventListener("click", () => {
+            const nameToRestore = entry.name.replace("👥 ", "");
+            session.removed[cls] = (session.removed[cls] || []).filter(n => n !== nameToRestore);
+            session.history.splice(idx, 1);
+            saveSession();
+            renderHistory();
+            drawWheel();
+        });
+        li.appendChild(delBtn);
+        list.appendChild(li);
+    });
+}
+
+document.getElementById("quickPickBtn").addEventListener("click", () => {
+    const cls = document.getElementById("classSelect").value;
+    const names = studentsDB[cls] || [];
+    if (names.length === 0) return;
+    document.getElementById("quickResult").textContent = "🎯 " + names[Math.floor(Math.random() * names.length)];
+});
+
+document.getElementById("taskBtn").addEventListener("click", () => {
+    document.getElementById("taskResult").textContent = "✨ " + TASKS[Math.floor(Math.random() * TASKS.length)];
+});
+
+// تصفير الفصل الحالي فقط
+document.getElementById("resetBtn").addEventListener("click", () => {
+    const cls = document.getElementById("classSelect").value;
+    if (!cls) {
+        alert("الرجاء اختيار فصل أولاً لتصفير سجله.");
+        return;
+    }
+    if (!confirm(`سيتم تصفير سجل ومستبعدي (فصل ${cls}) فقط وعودة جميع طلابه للعجلة. متأكد؟`)) return;
+    
+    session.removed[cls] = [];
+    session.excluded[cls] = [];
+    session.history = session.history.filter(entry => entry.cls !== cls);
+    
+    saveSession();
+    renderHistory();
+    drawWheel();
+    renderAbsentBox();
+    document.getElementById("winnerBox").textContent = "تم بدء جلسة جديدة";
+    document.getElementById("winnerBox").classList.remove("team-mode");
+});
+
+/* ================== بدء التشغيل ================== */
+loadSession();
+loadInitialDB(); 
+</script>
 
 </body>
 </html>

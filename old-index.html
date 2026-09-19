@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>اختبار الخطوط</title>
+<style>
+    /* عرّف خطك هنا - غيّر المسارات لتطابق مجلد fonts عندك */
+    @font-face {
+        font-family: 'MyFont';
+        src: url('fonts/fontR.otf') format('opentype');
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: 'MyFont';
+        src: url('fonts/fontB.otf') format('opentype');
+        font-weight: 700;
+    }
+
+    body {
+        background-color: #1e1e2f;
+        color: white;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .box {
+        max-width: 700px;
+        margin: 30px auto;
+        padding: 25px;
+        border-radius: 12px;
+        background-color: #2a2a40;
+    }
+
+    .label {
+        font-size: 14px;
+        color: #ffcc00;
+        margin-bottom: 10px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* القسم الأول: الخط الافتراضي (بدون تخصيص) */
+    .default-font {
+        font-size: 32px;
+    }
+
+    /* القسم الثاني: الخط المخصص - عادي */
+    .custom-font-regular {
+        font-family: 'MyFont', sans-serif;
+        font-weight: 400;
+        font-size: 32px;
+    }
+
+    /* القسم الثالث: الخط المخصص - عريض */
+    .custom-font-bold {
+        font-family: 'MyFont', sans-serif;
+        font-weight: 700;
+        font-size: 32px;
+    }
+
+    /* القسم الرابع: الخط المخصص - ستايل ممدود (salt) */
+    .custom-font-extended {
+        font-family: 'MyFont', sans-serif;
+        font-weight: 400;
+        font-size: 32px;
+        font-feature-settings: "salt" on;
+    }
+</style>
+</head>
+<body>
+
+    <h1 style="font-family: Arial, sans-serif;">🔤 صفحة اختبار الخطوط</h1>
+
+    <div class="box">
+        <div class="label">1) الخط الافتراضي (بدون أي تخصيص)</div>
+        <div class="default-font">مرحبًا بكم في الفصل السادس الابتدائي</div>
+    </div>
+
+    <div class="box">
+        <div class="label">2) الخط المخصص - عادي (Regular)</div>
+        <div class="custom-font-regular">مرحبًا بكم في الفصل السادس الابتدائي</div>
+    </div>
+
+    <div class="box">
+        <div class="label">3) الخط المخصص - عريض (Bold)</div>
+        <div class="custom-font-bold">مرحبًا بكم في الفصل السادس الابتدائي</div>
+    </div>
+
+    <div class="box">
+        <div class="label">4) الخط المخصص - ستايل ممدود (salt)</div>
+        <div class="custom-font-extended">مرحبًا بكم في الفصل السادس الابتدائي</div>
+    </div>
+
+</body>
+</html>
