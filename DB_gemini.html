@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>مسابقة قواعد البيانات - الصف السادس الابتدائي</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Tajawal & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --app-height: 100dvh;
+    }
+    @supports not (height: 100dvh) {
+      :root {
+        --app-height: 100vh;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: var(--app-height);
+      overflow: hidden;
+      font-family: 'Tajawal', 'Cairo', sans-serif;
+      background: linear-gradient(145deg, #EFF6FF 0%, #F8FAFC 50%, #ECFDF5 100%);
+      color: #1E293B;
+      user-select: none;
+    }
+
+    h1, h2, h3, .font-heading {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+    }
+
+    /* Subtle animated background shapes */
+    .bg-grid-pattern {
+      background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Custom Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-float {
+      animation: floatSlow 3.2s ease-in-out infinite;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.92) translateY(8px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-pop {
+      animation: popIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shakeError 0.4s ease-in-out;
+    }
+
+    @keyframes starPop {
+      0% { opacity: 0; transform: scale(0) rotate(-35deg); }
+      70% { transform: scale(1.25) rotate(8deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    .star-anim {
+      animation: starPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35); }
+      50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+    }
+    .btn-pulse {
+      animation: pulseGlow 2s infinite;
+    }
+
+    /* Certificate ornate border */
+    .certificate-frame {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 100%);
+      border: 3px solid #F59E0B;
+      box-shadow: inset 0 0 0 4px #FEF3C7, 0 12px 30px -8px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Responsive compact adjustments for very short mobile viewports */
+    @media (max-height: 660px) {
+      .compact-hide-on-tiny {
+        display: none !important;
+      }
+      .compact-svg-box {
+        height: 54px !important;
+      }
+      .compact-pad {
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-grid-pattern relative flex items-center justify-center">
+
+  <!-- Confetti Canvas Overlay -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+  <!-- Main Single-Screen Container -->
+  <main class="w-full max-w-md h-full flex flex-col justify-between px-3 py-2.5 sm:py-4 relative z-10 overflow-hidden">
+
+    <!-- ==================== SCREEN 1: START SCREEN ==================== -->
+    <section id="startScreen" class="w-full h-full flex flex-col justify-between bg-white/95 backdrop-blur-md rounded-3xl shadow-xl border border-blue-100 p-3.5 sm:p-5 animate-pop overflow-hidden">
+      
+      <!-- Top Header Badge & School Name -->
+      <div class="flex flex-col gap-1.5 shrink-0">
+        <div class="flex items-center justify-between">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <span>🎓</span> الصف السادس الابتدائي
+          </span>
+          <button id="soundToggleStart" onclick="toggleSound()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 flex items-center justify-center transition border border-slate-200" title="تشغيل/كتم الصوت">
+            <span id="soundIconStart" class="text-base">🔊</span>
+          </button>
+        </div>
+
+        <!-- Prominent School Name Banner -->
+        <div class="w-full py-1.5 px-3 rounded-2xl bg-gradient-to-l from-blue-50 via-amber-50/70 to-emerald-50 border-2 border-blue-200 text-center shadow-sm">
+          <div class="font-heading font-black text-base sm:text-xl text-slate-800 tracking-wide flex items-center justify-center gap-1.5">
+            <span class="text-lg sm:text-xl">🏫</span>
+            <span>مدرسة <span class="text-blue-700 font-black underline decoration-amber-400 decoration-2 underline-offset-4">عروة بن الزبير</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Database Hero Illustration (SVG) -->
+      <div class="flex flex-col items-center text-center my-auto py-0.5">
+        <div class="w-32 h-28 sm:w-40 sm:h-32 animate-float flex items-center justify-center">
+          <svg viewBox="0 0 240 190" class="w-full h-full drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Soft background glow circle -->
+            <circle cx="120" cy="98" r="76" fill="url(#heroGrad)" opacity="0.18"/>
+            
+            <!-- Spreadsheet / Table Window Card -->
+            <rect x="24" y="34" width="128" height="102" rx="12" fill="#FFFFFF" stroke="#2563EB" stroke-width="3"/>
+            <!-- Table Header (Row 1) -->
+            <path d="M24 46C24 39.3726 29.3726 34 36 34H140C146.627 34 152 39.3726 152 46V58H24V46Z" fill="#2563EB"/>
+            <circle cx="38" cy="46" r="3.5" fill="#93C5FD"/>
+            <circle cx="50" cy="46" r="3.5" fill="#FDE047"/>
+            <circle cx="62" cy="46" r="3.5" fill="#86EFAC"/>
+            <!-- Table Grid Rows & Columns -->
+            <line x1="68" y1="58" x2="68" y2="136" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="110" y1="58" x2="110" y2="136" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="24" y1="84" x2="152" y2="84" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="24" y1="110" x2="152" y2="110" stroke="#CBD5E1" stroke-width="2"/>
+            <!-- Highlighted Row (Record) -->
+            <rect x="26" y="86" width="124" height="22" fill="#DBEAFE" opacity="0.7"/>
+            <!-- Cell Bars -->
+            <rect x="34" y="68" width="24" height="6" rx="3" fill="#64748B"/>
+            <rect x="76" y="68" width="24" height="6" rx="3" fill="#3B82F6"/>
+            <rect x="118" y="68" width="22" height="6" rx="3" fill="#10B981"/>
+            <rect x="34" y="94" width="24" height="6" rx="3" fill="#1D4ED8"/>
+            <rect x="76" y="94" width="24" height="6" rx="3" fill="#1D4ED8"/>
+            <rect x="118" y="94" width="22" height="6" rx="3" fill="#F59E0B"/>
+            <rect x="34" y="120" width="24" height="6" rx="3" fill="#64748B"/>
+            <rect x="76" y="120" width="24" height="6" rx="3" fill="#3B82F6"/>
+            <rect x="118" y="120" width="22" height="6" rx="3" fill="#10B981"/>
+
+            <!-- 3D Database Cylinder Stack (Right Side) -->
+            <g transform="translate(132, 62)">
+              <!-- Bottom Cylinder -->
+              <path d="M8 62V82C8 90 26 96 48 96C70 96 88 90 88 82V62" fill="#10B981" stroke="#047857" stroke-width="2.5"/>
+              <ellipse cx="48" cy="62" rx="40" ry="12" fill="#34D399" stroke="#047857" stroke-width="2.5"/>
+              <!-- Middle Cylinder -->
+              <path d="M8 38V58C8 66 26 72 48 72C70 72 88 66 88 58V38" fill="#3B82F6" stroke="#1D4ED8" stroke-width="2.5"/>
+              <ellipse cx="48" cy="38" rx="40" ry="12" fill="#60A5FA" stroke="#1D4ED8" stroke-width="2.5"/>
+              <!-- Top Cylinder -->
+              <path d="M8 14V34C8 42 26 48 48 48C70 48 88 42 88 34V14" fill="#F59E0B" stroke="#B45309" stroke-width="2.5"/>
+              <ellipse cx="48" cy="14" rx="40" ry="12" fill="#FBBF24" stroke="#B45309" stroke-width="2.5"/>
+              <!-- Cylinder LED lights -->
+              <circle cx="24" cy="30" r="3" fill="#FEF08A"/>
+              <circle cx="24" cy="54" r="3" fill="#DBEAFE"/>
+              <circle cx="24" cy="78" r="3" fill="#A7F3D0"/>
+            </g>
+
+            <!-- Filter Funnel & Magnifying Glass Badge -->
+            <g transform="translate(82, 118)">
+              <circle cx="28" cy="28" r="24" fill="#FEF3C7" stroke="#F59E0B" stroke-width="3"/>
+              <path d="M17 20H39L31 30V38L25 35V30L17 20Z" fill="#F59E0B" stroke="#B45309" stroke-width="2" stroke-linejoin="round"/>
+            </g>
+
+            <!-- Sparkles -->
+            <path d="M195 28L198 36L206 39L198 42L195 50L192 42L184 39L192 36L195 28Z" fill="#F59E0B"/>
+            <path d="M28 148L30 153L35 155L30 157L28 162L26 157L21 155L26 153L28 148Z" fill="#3B82F6"/>
+
+            <defs>
+              <linearGradient id="heroGrad" x1="40" y1="20" x2="200" y2="180" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2563EB"/>
+                <stop offset="1" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <h1 class="font-heading font-black text-2xl sm:text-3xl text-slate-800 tracking-tight mt-1">
+          مسابقة <span class="text-blue-600">قواعد البيانات</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1 max-w-xs leading-relaxed">
+          رحلة تفاعلية ممتعة لاختبار مهاراتك في الجداول الإلكترونية، السجلات، الفرز والتصفية!
+        </p>
+
+        <!-- Feature Pills -->
+        <div class="flex flex-wrap items-center justify-center gap-1.5 mt-2.5">
+          <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+            🎲 15 سؤالاً عشوائياً
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+            ♾️ بدون مؤقت
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-bold">
+            🏅 شهادة تقدير
+          </span>
+        </div>
+      </div>
+
+      <!-- Student Name Input & Start Button -->
+      <div class="w-full space-y-2.5">
+        <div>
+          <label for="studentNameInput" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 pr-1">
+            👋 ما اسمك يا بطل البيانات؟
+          </label>
+          <div class="relative">
+            <input
+              id="studentNameInput"
+              type="text"
+              maxlength="32"
+              placeholder="اكتب اسمك الثلاثي أو الثنائي هنا..."
+              class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 font-bold text-sm sm:text-base transition placeholder:text-slate-400 placeholder:font-normal"
+              onkeydown="if(event.key === 'Enter') startQuiz()"
+            />
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">✏️</span>
+          </div>
+          <p id="nameErrorMsg" class="text-rose-600 text-xs font-bold mt-1 pr-1 hidden">
+            ⚠️ من فضلك أدخل اسمك أولاً لنكتب شهادة التقدير باسمك!
+          </p>
+        </div>
+
+        <button
+          onclick="startQuiz()"
+          class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-l from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.99] text-white font-heading font-extrabold text-base sm:text-lg shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition btn-pulse"
+        >
+          <span>ابدأ المسابقة الآن</span>
+          <span class="text-xl">🚀</span>
+        </button>
+
+        <!-- Secondary CSV Import Bar (NotebookLM compatible) -->
+        <div class="pt-1 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100">
+          <span id="questionBankStatus" class="font-bold text-slate-500">
+            📚 بنك الأسئلة الجاهز: <strong id="totalBankCount" class="text-blue-600">58</strong> سؤالاً
+          </span>
+          <label class="cursor-pointer inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-bold bg-blue-50/70 px-2.5 py-1 rounded-lg border border-blue-100 transition">
+            <span>📂 استيراد CSV</span>
+            <input type="file" id="csvFileInput" accept=".csv,text/csv" class="hidden" onchange="handleCSVUpload(event)" />
+          </label>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== SCREEN 2: QUESTION SCREEN ==================== -->
+    <section id="questionScreen" class="w-full h-full hidden flex-col justify-between gap-2 overflow-hidden">
+      
+      <!-- Top Status Header -->
+      <header class="bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2 shadow-sm border border-blue-100 flex flex-col gap-1.5 shrink-0">
+        <div class="flex items-center justify-between">
+          <!-- Student Pill -->
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-black shrink-0">🧑‍💻</span>
+            <span id="headerStudentName" class="font-bold text-xs sm:text-sm text-slate-800 truncate max-w-[130px] sm:max-w-[170px]">البطل</span>
+          </div>
+
+          <!-- Question Number Badge -->
+          <div class="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-heading font-extrabold text-xs">
+            السؤال <span id="currentQNum">1</span> من <span id="totalQNum">15</span>
+          </div>
+
+          <!-- Score & Sound Toggle -->
+          <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+              <span class="text-xs">⭐</span>
+              <span id="currentScoreText" class="font-heading font-extrabold text-xs text-amber-800">0</span>
+            </div>
+            <button onclick="toggleSound()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 flex items-center justify-center text-xs border border-slate-200" title="الصوت">
+              <span id="soundIconQuiz">🔊</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Smooth Progress Bar -->
+        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-gradient-to-l from-blue-500 to-emerald-500 rounded-full transition-all duration-500" style="width: 6.6%"></div>
+        </div>
+      </header>
+
+      <!-- Main Question Card -->
+      <div id="questionCard" class="flex-1 min-h-0 bg-white/95 backdrop-blur-md rounded-3xl shadow-lg border border-blue-100 p-3.5 sm:p-4 flex flex-col justify-between overflow-hidden relative">
+        
+        <!-- Top Question Category & Contextual SVG Illustration -->
+        <div class="flex flex-col items-center text-center shrink-0">
+          <div class="w-full flex items-center justify-between mb-1">
+            <span id="questionTypeBadge" class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              اختيار من متعدد
+            </span>
+            <span id="questionTopicBadge" class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600">
+              💡 مفاهيم قواعد البيانات
+            </span>
+          </div>
+
+          <!-- Dynamic SVG Container -->
+          <div id="questionIllustration" class="compact-svg-box h-16 sm:h-20 w-full flex items-center justify-center my-0.5">
+            <!-- Injected dynamically via JS based on question keywords -->
+          </div>
+
+          <!-- Question Text -->
+          <h2 id="questionText" class="font-heading font-extrabold text-slate-800 text-sm sm:text-base md:text-lg leading-snug px-1 mt-1">
+            نص السؤال يظهر هنا...
+          </h2>
+        </div>
+
+        <!-- Options Container (Auto-adapts for Multiple Choice or True/False) -->
+        <div id="optionsContainer" class="my-auto py-1.5 w-full">
+          <!-- Buttons injected dynamically -->
+        </div>
+
+        <!-- Feedback & Explanation Box (Hidden until user answers, replaces space cleanly without scroll) -->
+        <div id="feedbackArea" class="hidden shrink-0 rounded-2xl p-2.5 sm:p-3 border transition-all">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <p id="feedbackTitle" class="font-heading font-extrabold text-xs sm:text-sm flex items-center gap-1">
+                <span>🌟</span> أحسنت يا بطل!
+              </p>
+              <p id="feedbackExplanation" class="text-[11px] sm:text-xs text-slate-700 font-medium mt-0.5 leading-relaxed">
+                الشرح التعليمي يظهر هنا...
+              </p>
+            </div>
+            <button
+              id="nextQuestionBtn"
+              onclick="goToNextQuestion()"
+              class="shrink-0 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-heading font-bold text-xs sm:text-sm shadow-md flex items-center gap-1 transition"
+            >
+              <span id="nextBtnLabel">السؤال التالي</span>
+              <span>⬅️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Helper prompt shown before answering -->
+        <div id="preAnswerHint" class="shrink-0 text-center py-1 border-t border-slate-100">
+          <span class="text-[11px] text-slate-400 font-medium">👆 اضغط على الإجابة الصحيحة (خذ وقتك بدون مؤقت)</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: CERTIFICATE / FINAL SCORE SCREEN ==================== -->
+    <section id="resultScreen" class="w-full h-full hidden flex-col justify-between overflow-hidden animate-pop">
+      
+      <!-- Certificate Container -->
+      <div class="certificate-frame w-full h-full rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between text-center relative overflow-hidden">
+        
+        <!-- Certificate Header with School Name -->
+        <div class="flex flex-col gap-1 shrink-0">
+          <div class="flex items-center justify-between text-amber-700 text-[11px] sm:text-xs font-bold border-b border-amber-200/80 pb-1">
+            <span class="flex items-center gap-1 font-heading font-black text-slate-800 text-xs sm:text-sm">
+              <span>🏫</span> مدرسة <span class="text-blue-700 font-black">عروة بن الزبير</span>
+            </span>
+            <span class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-extrabold border border-amber-300">
+              الصف السادس الابتدائي
+            </span>
+          </div>
+        </div>
+
+        <!-- Trophy / Medal SVG & Stars -->
+        <div class="flex flex-col items-center my-auto py-0.5">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center animate-float">
+            <svg viewBox="0 0 120 120" class="w-full h-full drop-shadow" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Ribbons -->
+              <path d="M38 74L26 112L46 102L54 114L58 76" fill="#2563EB"/>
+              <path d="M82 74L94 112L74 102L66 114L62 76" fill="#1D4ED8"/>
+              <!-- Gold Medal Outer -->
+              <circle cx="60" cy="52" r="38" fill="#F59E0B" stroke="#B45309" stroke-width="3"/>
+              <circle cx="60" cy="52" r="30" fill="#FBBF24" stroke="#FEF08A" stroke-width="2" stroke-dasharray="4 3"/>
+              <!-- Trophy Star Inside -->
+              <path d="M60 28L66.9 42L82.4 44.2L71.2 55.1L73.8 70.5L60 63.2L46.2 70.5L48.8 55.1L37.6 44.2L53.1 42L60 28Z" fill="#FFFBEB" stroke="#B45309" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <!-- 5 Animated Stars Container -->
+          <div id="starsContainer" class="flex items-center justify-center gap-1 my-0.5 text-xl sm:text-2xl">
+            <!-- Stars injected via JS -->
+          </div>
+
+          <!-- Certificate Title -->
+          <div class="inline-block px-3.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-heading font-black text-xs sm:text-sm border border-amber-300">
+            📜 شهادة شكر وتقدير
+          </div>
+
+          <p class="text-[11px] sm:text-xs text-slate-600 font-bold mt-1">
+            تشكر مدرسة <strong class="text-slate-900 font-black">عروة بن الزبير</strong>  الطالب:
+          </p>
+
+          <!-- Student Name Box -->
+          <div class="w-full max-w-xs my-1 py-1.5 px-4 rounded-2xl bg-white border-2 border-dashed border-blue-400 shadow-sm">
+            <h2 id="certStudentName" class="font-heading font-black text-base sm:text-xl text-blue-700 truncate">
+              اسم الطالب
+            </h2>
+          </div>
+
+          <!-- Badge Rank Title -->
+          <div id="certBadgeTitle" class="px-3 py-0.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-heading font-extrabold text-xs sm:text-sm">
+            🏆 خبير قواعد البيانات الأسطوري
+          </div>
+
+          <!-- Score Summary Box -->
+          <div class="grid grid-cols-2 gap-2 w-full max-w-xs mt-1.5">
+            <div class="bg-white/90 rounded-xl p-1.5 border border-slate-200 shadow-sm">
+              <span class="block text-[10px] sm:text-[11px] text-slate-500 font-bold">الدرجة النهائية</span>
+              <span id="finalScoreFraction" class="font-heading font-black text-base sm:text-lg text-blue-600">15 / 15</span>
+            </div>
+            <div class="bg-white/90 rounded-xl p-1.5 border border-slate-200 shadow-sm">
+              <span class="block text-[10px] sm:text-[11px] text-slate-500 font-bold">نسبة الإتقان</span>
+              <span id="finalScorePercent" class="font-heading font-black text-base sm:text-lg text-emerald-600">100%</span>
+            </div>
+          </div>
+
+          <p id="certEncouragement" class="text-[11px] sm:text-xs text-slate-600 font-medium mt-1 px-2 leading-snug compact-hide-on-tiny">
+            أداء استثنائي في إتقان مهارات قواعد البيانات والجداول الإلكترونية!
+          </p>
+
+          <!-- Teacher Signature / Endorsement Footer -->
+          <div class="w-full max-w-xs mt-1.5 pt-1.5 border-t border-amber-300/80 flex items-center justify-between px-2">
+            <div class="text-right">
+              <span class="block text-[10px] text-slate-500 font-bold">إشراف معلم المادة</span>
+              <span class="font-heading font-black text-xs sm:text-sm text-slate-800">المعلم: <strong class="text-blue-800 font-black">مقبل الزهراني</strong></span>
+            </div>
+            <div class="flex items-center gap-1 bg-amber-100/80 border border-amber-300 px-2.5 py-1 rounded-xl">
+              <span class="text-sm">🎖️</span>
+              <span class="font-heading font-extrabold text-[11px] text-amber-900">معتمد</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="flex items-center gap-2 w-full pt-1 shrink-0">
+          <button
+            onclick="retryQuizWithNewQuestions()"
+            class="flex-1 py-2.5 sm:py-3 px-4 rounded-2xl bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-heading font-extrabold text-xs sm:text-sm shadow-lg shadow-blue-500/25 flex items-center justify-center gap-1.5 transition"
+          >
+            <span>🔄</span>
+            <span>إعادة المحاولة (أسئلة جديدة)</span>
+          </button>
+          <button
+            onclick="backToStartScreen()"
+            class="py-2.5 sm:py-3 px-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-heading font-bold text-xs sm:text-sm border border-slate-300 flex items-center justify-center gap-1 transition"
+            title="تغيير اسم الطالب"
+          >
+            <span>👤</span>
+            <span>تغيير الاسم</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. EMBEDDED 58 QUESTIONS BANK (FROM database_quiz_58.csv)
+    // =========================================================================
+    const DEFAULT_QUESTIONS_BANK = [
+      {"النوع": "اختيار", "السؤال": "ماذا تسمى الحقائق الأولية التي لا تعطي معنى وهي منفردة؟", "الخيار1": "البيانات", "الخيار2": "المعلومات", "الخيار3": "السجلات", "الخيار4": "الملفات", "الإجابة_الصحيحة": "1", "الشرح": "البيانات هي قيم وأرقام أولية مجردة لا توضح معنى بنفسها."},
+      {"النوع": "اختيار", "السؤال": "أين يتم إدخال أسماء حقول قاعدة البيانات في جدول إكسل؟", "الخيار1": "في الصف الأول", "الخيار2": "في العمود الأخير", "الخيار3": "في الصف الأخير", "الخيار4": "في الخلية الجانبية", "الإجابة_الصحيحة": "1", "الشرح": "توضع عناوين الأعمدة وأسماء الحقول دائماً في الصف الأول."},
+      {"النوع": "اختيار", "السؤال": "ماذا يمثل كل صف أفقي في جدول قاعدة البيانات؟", "الخيار1": "سجلاً كاملاً", "الخيار2": "حقلاً واحداً", "الخيار3": "عنوان الحقل", "الخيار4": "عامل تصفية", "الإجابة_الصحيحة": "1", "الشرح": "يحتوي الصف الأفقي على مجموعة بيانات تشكل سجلاً لكائن معين."},
+      {"النوع": "اختيار", "السؤال": "ما الخيار الذي نحدده في نافذة التنسيق كجدول لتأكيد وجود عناوين الحقول؟", "الخيار1": "الجدول يحتوي على رؤوس", "الخيار2": "إلغاء التنسيق", "الخيار3": "تنسيق شرطي", "الخيار4": "دالة الجمع التلقائي", "الإجابة_الصحيحة": "1", "الشرح": "يؤكد خيار يحتوي على رؤوس أن الصف الأول يمثل عناوين."},
+      {"النوع": "اختيار", "السؤال": "ما هي النتائج المفيدة الناتجة عن معالجة وتنظيم البيانات؟", "الخيار1": "الرموز", "الخيار2": "المعلومات", "الخيار3": "الأرقام المجردة", "الخيار4": "الحقول الفارغة", "الإجابة_الصحيحة": "2", "الشرح": "تنتج المعلومات بعد معالجة البيانات وتنظيمها لتصبح مفهومة."},
+      {"النوع": "اختيار", "السؤال": "أي نوع من البيانات يمثله التاريخ مثل 23-سبتمبر-2022؟", "الخيار1": "بيانات أبجدية", "الخيار2": "بيانات أبجدية عددية", "الخيار3": "بيانات عددية فقط", "الخيار4": "بيانات صوتية", "الإجابة_الصحيحة": "2", "الشرح": "تحتوي البيانات الأبجدية العددية على مزيج من الحروف والأرقام والرموز."},
+      {"النوع": "اختيار", "السؤال": "ماذا يطلق على كل خلية تحتوي على نوع واحد من البيانات ضمن سجل؟", "الخيار1": "الجدول", "الخيار2": "الحقل", "الخيار3": "الصف الكامل", "الخيار4": "قاعدة البيانات", "الإجابة_الصحيحة": "2", "الشرح": "الحقل هو المساحة المخصصة لخاصية واحدة محددة داخل السجل."},
+      {"النوع": "اختيار", "السؤال": "أي عملية تُستخدم لعرض مجموعة محددة من البيانات وإخفاء الباقي؟", "الخيار1": "الفرز", "الخيار2": "التصفية", "الخيار3": "الدمج", "الخيار4": "المسح", "الإجابة_الصحيحة": "2", "الشرح": "تعرض التصفية البيانات المطابقة للمعيار فقط وتخفي بقية الصفوف."},
+      {"النوع": "اختيار", "السؤال": "أي من البرامج التالية يُعد برنامجاً متخصصاً في إدارة قواعد البيانات؟", "الخيار1": "برنامج الرسام", "الخيار2": "مايكروسوفت أكسس", "الخيار3": "محرر النصوص", "الخيار4": "مشغل الفيديو", "الإجابة_الصحيحة": "2", "الشرح": "مايكروسوفت أكسس من أشهر البرامج المتخصصة لإدارة قواعد البيانات."},
+      {"النوع": "اختيار", "السؤال": "ما ترتيب الفرز الذي يرتب الأعداد من الأكبر إلى الأصغر؟", "الخيار1": "تصاعدي", "الخيار2": "تنازلي", "الخيار3": "عشوائي", "الخيار4": "تلقائي", "الإجابة_الصحيحة": "2", "الشرح": "الفرز التنازلي يبدأ بالقيمة الكبرى وينتهي بالقيمة الصغرى."},
+      {"النوع": "اختيار", "السؤال": "ما المفتاح المستخدم للتنقل بين خلايا السجل في إكسل أثناء الإدخال؟", "الخيار1": "Enter", "الخيار2": "Shift", "الخيار3": "Tab", "الخيار4": "Space", "الإجابة_الصحيحة": "3", "الشرح": "ينقل مفتاح Tab المؤشر إلى الخلية المجاورة في نفس الصف."},
+      {"النوع": "اختيار", "السؤال": "ما المفتاح المستمر ضغطه لتحديد سجلات غير متجاورة في إكسل؟", "الخيار1": "Space", "الخيار2": "Shift", "الخيار3": "Ctrl", "الخيار4": "Alt", "الإجابة_الصحيحة": "3", "الشرح": "يتيح مفتاح Ctrl اختيار صفوف متفرقة وغير متصلة."},
+      {"النوع": "اختيار", "السؤال": "أي من الخيارات التالية يُعتبر مثالاً على البيانات الأبجدية؟", "الخيار1": "0501234567", "الخيار2": "10-أ", "الخيار3": "المملكة العربية السعودية", "الخيار4": "12:30 م", "الإجابة_الصحيحة": "3", "الشرح": "تتكون البيانات الأبجدية من حروف وفراغات فقط كأسم الممالك والمدن."},
+      {"النوع": "اختيار", "السؤال": "من أين يتم تطبيق خيار التنسيق كجدول Format as Table في إكسل؟", "الخيار1": "تبويب إدراج", "الخيار2": "تبويب عرض", "الخيار3": "تبويب الشريط الرئيسي Home", "الخيار4": "تبويب صيغ", "الإجابة_الصحيحة": "3", "الشرح": "يقع أمر التنسيق كجدول ضمن مجموعة أنماط في الشريط الرئيسي."},
+      {"النوع": "اختيار", "السؤال": "ما الإجراء المطلوب لإعادة إظهار كافة الصفوف المخفية بالتصفية؟", "الخيار1": "حذف الجدول", "الخيار2": "إعادة تشغيل الجهاز", "الخيار3": "اختيار تحديد الكل Select All", "الخيار4": "إغلاق الملف", "الإجابة_الصحيحة": "3", "الشرح": "يعيد خيار تحديد الكل عرض جميع سجلات الجدول بوضوح."},
+      {"النوع": "اختيار", "السؤال": "ما هي الحاوية المرئية التي تنظم البيانات في صفوف وأعمدة؟", "الخيار1": "الحقل", "الخيار2": "السجل", "الخيار3": "الجدول", "الخيار4": "المفتاح", "الإجابة_الصحيحة": "3", "الشرح": "ينظم الجدول البيانات في هيئة شبكة من صفوف وأعمدة."},
+      {"النوع": "اختيار", "السؤال": "ماذا يحدث عند إضافة بيانات طالب جديد في أول صف فارغ أسفل الجدول؟", "الخيار1": "تُلغى التصفية", "الخيار2": "يُحذف الصف الأول", "الخيار3": "يتعرف عليه إكسل كسجل جديد", "الخيار4": "يتوقف البرنامج", "الإجابة_الصحيحة": "3", "الشرح": "يضيف إكسل تلقائياً الصفوف الجديدة المتصلة إلى بنية الجدول."},
+      {"النوع": "اختيار", "السؤال": "كيف تظهر أسهم الفرز والتصفية في عناوين الأعمدة بإكسل؟", "الخيار1": "عند الضغط على Delete", "الخيار2": "عند فتح الحاسب", "الخيار3": "عند التراجع", "الخيار4": "بعد تطبيق أمر التنسيق كجدول", "الإجابة_الصحيحة": "4", "الشرح": "تظهر أسهم القوائم التلقائية فور تحويل نطاق الخلايا لجدول."},
+      {"النوع": "اختيار", "السؤال": "ما الترتيب الأبجدي للنصوص الذي يبدأ من حرف (أ) إلى (ي)؟", "الخيار1": "تنازلي", "الخيار2": "عشوائي", "الخيار3": "مخصص", "الخيار4": "تصاعدي", "الإجابة_الصحيحة": "4", "الشرح": "ترتيب الحروف من أ إلى ي يمثل الفرز التصاعدي الأبجدي."},
+      {"النوع": "اختيار", "السؤال": "ما هي المخرجات الناتجة من معالجة جهاز الحاسب للبيانات؟", "الخيار1": "البيانات الخام", "الخيار2": "الحقول", "الخيار3": "الرموز", "الخيار4": "المعلومات", "الإجابة_الصحيحة": "4", "الشرح": "تُعتبر المعلومات المخرجات النهائية الناتجة عن المعالجة الحاسوبية."},
+      {"النوع": "اختيار", "السؤال": "أي مما يلي يُعد مثالاً على قاعدة بيانات إلكترونية؟", "الخيار1": "حاسبة الآلة", "الخيار2": "برنامج الرسام", "الخيار3": "ملف صوتي", "الخيار4": "دفتر العناوين الإلكتروني", "الإجابة_الصحيحة": "4", "الشرح": "يحفظ دفتر العناوين بيانات الأشخاص في قاعدة منظمة وسريعة البحث."},
+      {"النوع": "اختيار", "السؤال": "أي من التالية ليس من خواص قاعدة البيانات؟", "الخيار1": "إمكانية البحث فيها", "الخيار2": "إمكانية فرزها", "الخيار3": "تغير حجمها باستمرار", "الخيار4": "ثبات البيانات وعدم قابليتها للتعديل", "الإجابة_الصحيحة": "4", "الشرح": "قواعد البيانات ديناميكية وقابلة للتعديل والإضافة في أي وقت."},
+      {"النوع": "صح_خطأ", "السؤال": "البيانات هي مدخلات جهاز الحاسب بينما المعلومات هي المخرجات.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يستقبل الحاسب البيانات كمدخلات ويخرج المعلومات بعد المعالجة."},
+      {"النوع": "صح_خطأ", "السؤال": "تُشكل أرقام الهاتف مع الرموز مثل # و $ أمثلة على البيانات الأبجدية العددية.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "البيانات الأبجدية العددية تجمع بين الحروف والأرقام والرموز الخاصة."},
+      {"النوع": "صح_خطأ", "السؤال": "تتكون البيانات العددية من الأرقام  0 إلى 9 ويمكن قياسها.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "تعبر البيانات العددية عن قياسات وأعداد محددة."},
+      {"النوع": "صح_خطأ", "السؤال": "يجب أن تتعلق جميع البيانات في قاعدة البيانات الواحدة بنفس الموضوع.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "اشترطت الدروس ترابط الموضوع لضمان تنظيم وصحة قاعدة البيانات."},
+      {"النوع": "صح_خطأ", "السؤال": "يمثل الصف الأفقي في جدول قاعدة البيانات سجلاً كاملاً.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يحتوي الصف على بيانات مترابطة تخص عنصراً أو شخصاً واحداً."},
+      {"النوع": "صح_خطأ", "السؤال": "يطلق الحقل على كل خلية تحتوي على نوع واحد من البيانات ضمن السجل.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "الحقل يمثل خانة بيانية مفردة لخاصية معينة في الجدول."},
+      {"النوع": "صح_خطأ", "السؤال": "يمكن التعديل على قاعدة البيانات وإضافة سجلات جديدة في أي وقت.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "قاعدة البيانات غير ثابتة وتتسع لإضافة حقول وسجلات إضافية."},
+      {"النوع": "صح_خطأ", "السؤال": "تطبيق ميزة التنسيق كجدول في إكسل يضيف تلقائياً أسهم الفرز والتصفية.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يُفعل خيار التنسيق كجدول أدوات الفرز والتصفية على رؤوس الأعمدة."},
+      {"النوع": "صح_خطأ", "السؤال": "الفرز التصاعدي للنصوص يرتب الكلمات من حرف أ إلى حرف ي.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يبدأ الفرز التصاعدي الأبجدي بحرف الألف وينتهي بالياء."},
+      {"النوع": "صح_خطأ", "السؤال": "تتيح التصفية عرض صفوف محددة وإخفاء بقية الصفوف دون حذفها.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "تخفي التصفية السجلات غير المطلوبة مؤقتاً وتحتفظ بها في الملف."},
+      {"النوع": "صح_خطأ", "السؤال": "يمكن استخدام مفتاح Ctrl لتحديد سجلات غير متجاورة في إكسل.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يسمح مفتاح Ctrl باختيار عدة صفوف منفصلة في الجدول."},
+      {"النوع": "صح_خطأ", "السؤال": "يُستخدم أمر إلغاء تطبيق عامل التصفية لإعادة إظهار كافة البيانات.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يزيل هذا الأمر معايير التصفية المطبقة ويعرض الجدول كاملاً."},
+      {"النوع": "صح_خطأ", "السؤال": "يعتبر مايكروسوفت أكسس من برامج إدارة قواعد البيانات الشائعة.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "أكسس برنامج متناغم مع حزمة أوفيس ومخصص لقواعد البيانات."},
+      {"النوع": "صح_خطأ", "السؤال": "يمكن استخدام برنامج إكسل لتصميم جدول قاعدة بيانات بسيط.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "يوفر إكسل أدوات سهلة لبناء الجداول وتنظيم البيانات وقواعدها."},
+      {"النوع": "صح_خطأ", "السؤال": "تساعد عملية الفرز والتصفية على توفير الوقت وتحسين الإنتاجية.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "صح", "الشرح": "تسرع عملية ترتيب وتصفية البيانات الوصول للمعلومة المطلوبة."},
+      {"النوع": "صح_خطأ", "السؤال": "البيانات منفردة تعطي معاني واضحة وسهلة الفهم دون معالجة.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "البيانات قيم أولية غير مترابطة ولا تعطي معنى إلا بعد المعالجة."},
+      {"النوع": "صح_خطأ", "السؤال": "تتكون البيانات الأبجدية من أرقام ورموز خاصة فقط.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "تتكون البيانات الأبجدية من حروف الهجاء والفراغات فقط."},
+      {"النوع": "صح_خطأ", "السؤال": "يمثل العمود في جدول قاعدة البيانات سجلاً كاملاً لمعلومات شخص.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يمثل العمود حقلاً أو سمة، بينما يمثل الصف السجل الكامل."},
+      {"النوع": "صح_خطأ", "السؤال": "قاعدة البيانات هي مجموعة بيانات ثابتة لا يمكن تغييرها أو زيادة حجمها.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "قاعدة البيانات مرنة وتتغير دائماً بإضافة سجلات وحقول جديدة."},
+      {"النوع": "صح_خطأ", "السؤال": "تؤدي عملية الفرز إلى حذف البيانات التي لا تتطابق مع الترتيب نهائياً.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يعيد الفرز ترتيب الصفوف فقط دون حذف أي قيمة منها."},
+      {"النوع": "صح_خطأ", "السؤال": "تؤدي تصفية البيانات إلى حذف الصفوف التي لا تظهر بشكل دائم.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "تقوم التصفية بإخفاء الصفوف غير المطابقة للمعيار مؤقتاً."},
+      {"النوع": "صح_خطأ", "السؤال": "توضع عناوين حقول قاعدة البيانات في الصف الأخير من الجدول.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "تكتب أسماء الحقول في الصف الأول دائماً لجعلها عناوين للأعمدة."},
+      {"النوع": "صح_خطأ", "السؤال": "الفرز التنازلي للأرقام يرتب البيانات من الأصغر إلى الأكبر.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يرتب الفرز التنازلي الأرقام من القيمة الأكبر إلى الأصغر."},
+      {"النوع": "صح_خطأ", "السؤال": "تختلف التصفية والفرز ولكنهما مصطلحان يؤديان نفس الوظيفة تماماً.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "الفرز يعيد ترتيب البيانات، بينما التصفية تعرض مجموعة فرعية منها."},
+      {"النوع": "صح_خطأ", "السؤال": "يمكن دمج معلومات عن الرياضة والحيوانات في جدول قاعدة بيانات واحد.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يجب أن تتعلق جميع معلومات قاعدة البيانات الواحدة بنفس الموضوع."},
+      {"النوع": "صح_خطأ", "السؤال": "للتنقل بين خلايا الصف الواحد أثناء كتابة سجل نضغط مفتاح Enter.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يُستخدم مفتاح Tab للتنقل بين خلايا الصف أفقيًا."},
+      {"النوع": "صح_خطأ", "السؤال": "الفرز والتصفية يمكن تطبيقهما فقط على البيانات الرقمية دون النصية.", "الخيار1": "", "الخيار2": "", "الخيار3": "", "الخيار4": "", "الإجابة_الصحيحة": "خطأ", "الشرح": "يطبق الفرز والتصفية على النصوص والأرقام والتواريخ."}
+    ];
+
+    // =========================================================================
+    // 2. QUIZ STATE VARIABLES
+    // =========================================================================
+    let questionBank = [...DEFAULT_QUESTIONS_BANK];
+    let selectedQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let studentName = "";
+    let isAnswered = false;
+    let soundEnabled = true;
+    const QUIZ_LENGTH = 15;
+
+    // Motivating phrases for 6th-grade students
+    const POSITIVE_PHRASES = [
+      "🌟 أحسنت يا بطل! إجابة صحيحة وذكية",
+      "🚀 رائع يا عبقري البيانات! استمر هكذا",
+      "💎 ممتاز جداً! معلومة متقنة",
+      "👏 بطل الصف السادس! إجابة في الصميم",
+      "✨ مبدع! خطوة جديدة نحو القمة"
+    ];
+
+    const ENCOURAGING_PHRASES = [
+      "💡 محاولة جيدة! تعلّم من المعلومة التالية:",
+      "🌱 لا بأس يا بطل! هكذا نتعلم ونزداد خبرة:",
+      "🔍 قريب جداً! إليك التوضيح الصحيح:"
+    ];
+
+    // =========================================================================
+    // 3. WEB AUDIO API SYNTHESIZER (NO EXTERNAL MP3 NEEDED)
+    // =========================================================================
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = soundEnabled ? "🔊" : "🔇";
+      document.getElementById("soundIconStart").textContent = icon;
+      document.getElementById("soundIconQuiz").textContent = icon;
+      if (soundEnabled) playSound("click");
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        if (type === "click") {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(680, now + 0.06);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === "correct") {
+          // Bright major triad chime
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0.18, now + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + idx * 0.07 + 0.25);
+          });
+        } else if (type === "wrong") {
+          // Gentle two-note soft nudge
+          const notes = [330, 261.63];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.15, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.22);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.22);
+          });
+        } else if (type === "fanfare") {
+          // Victory fanfare for certificate screen
+          const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+          const times = [0, 0.1, 0.2, 0.32, 0.46, 0.58];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(freq, now + times[idx]);
+            gain.gain.setValueAtTime(0.2, now + times[idx]);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + times[idx] + 0.32);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + times[idx]);
+            osc.stop(now + times[idx] + 0.32);
+          });
+        }
+      } catch (e) {
+        // Ignore audio errors on restricted devices
+      }
+    }
+
+    // =========================================================================
+    // 4. CONTEXTUAL SVG ILLUSTRATIONS FOR QUESTIONS
+    // =========================================================================
+    function getContextualIllustration(questionText, questionType) {
+      const q = questionText;
+
+      // 1. Keyboard Shortcuts (Ctrl+A, Shift, Tab, Enter)
+      if (q.includes("Ctrl") || q.includes("Shift") || q.includes("Tab") || q.includes("مفتاح") || q.includes("اختصار")) {
+        return {
+          topic: "⌨️ اختصارات لوحة المفاتيح",
+          svg: `
+            <svg viewBox="0 0 180 68" class="h-full w-auto drop-shadow-sm" fill="none">
+              <rect x="14" y="10" width="68" height="48" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.5"/>
+              <rect x="20" y="15" width="56" height="34" rx="6" fill="#FFFFFF" stroke="#93C5FD" stroke-width="1.5"/>
+              <text x="48" y="37" text-anchor="middle" fill="#1D4ED8" font-family="Cairo" font-weight="900" font-size="15">Ctrl</text>
+              <circle cx="92" cy="34" r="8" fill="#FEF3C7"/>
+              <text x="92" y="39" text-anchor="middle" fill="#D97706" font-weight="900" font-size="16">+</text>
+              <rect x="104" y="10" width="62" height="48" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="2.5"/>
+              <rect x="110" y="15" width="50" height="34" rx="6" fill="#FFFFFF" stroke="#6EE7B7" stroke-width="1.5"/>
+              <text x="135" y="37" text-anchor="middle" fill="#047857" font-family="Cairo" font-weight="900" font-size="14">Tab / A</text>
+            </svg>`
+        };
+      }
+
+      // 2. Filter (التصفية)
+      if (q.includes("التصفية") || q.includes("تصفية") || q.includes("إخفاء")) {
+        return {
+          topic: "🔍 تصفية البيانات (Filter)",
+          svg: `
+            <svg viewBox="0 0 180 68" class="h-full w-auto drop-shadow-sm" fill="none">
+              <circle cx="90" cy="34" r="30" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+              <path d="M68 18H112L95 36V52L85 47V36L68 18Z" fill="#F59E0B" stroke="#B45309" stroke-width="2.2" stroke-linejoin="round"/>
+              <rect x="20" y="18" width="34" height="8" rx="4" fill="#93C5FD"/>
+              <rect x="20" y="30" width="34" height="8" rx="4" fill="#2563EB"/>
+              <rect x="20" y="42" width="34" height="8" rx="4" fill="#CBD5E1"/>
+              <rect x="126" y="24" width="34" height="8" rx="4" fill="#10B981"/>
+              <rect x="126" y="36" width="34" height="8" rx="4" fill="#10B981"/>
+            </svg>`
+        };
+      }
+
+      // 3. Sort (الفرز / تصاعدي / تنازلي)
+      if (q.includes("الفرز") || q.includes("فرز") || q.includes("تصاعدي") || q.includes("تنازلي") || q.includes("ترتيب")) {
+        return {
+          topic: "📊 فرز وترتيب السجلات",
+          svg: `
+            <svg viewBox="0 0 180 68" class="h-full w-auto drop-shadow-sm" fill="none">
+              <rect x="28" y="10" width="44" height="22" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+              <text x="50" y="26" text-anchor="middle" fill="#1E40AF" font-weight="900" font-size="14">أ</text>
+              <rect x="28" y="36" width="44" height="22" rx="6" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+              <text x="50" y="52" text-anchor="middle" fill="#065F46" font-weight="900" font-size="14">ي</text>
+              <path d="M88 14V54M88 54L80 45M88 54L96 45" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="108" y="14" width="24" height="8" rx="4" fill="#F59E0B"/>
+              <rect x="108" y="28" width="36" height="8" rx="4" fill="#3B82F6"/>
+              <rect x="108" y="42" width="48" height="8" rx="4" fill="#10B981"/>
+            </svg>`
+        };
+      }
+
+      // 4. Data vs Information (البيانات والمعلومات)
+      if (q.includes("المعلومات") || q.includes("الحقائق الأولية") || q.includes("معالجة") || q.includes("أبجدية")) {
+        return {
+          topic: "⚙️ البيانات والمعلومات",
+          svg: `
+            <svg viewBox="0 0 190 68" class="h-full w-auto drop-shadow-sm" fill="none">
+              <rect x="12" y="14" width="46" height="40" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+              <text x="35" y="32" text-anchor="middle" fill="#1D4ED8" font-weight="800" font-size="10">102</text>
+              <text x="35" y="46" text-anchor="middle" fill="#1D4ED8" font-weight="800" font-size="10">أحمد</text>
+              <path d="M64 34H78M78 34L73 29M78 34L73 39" stroke="#64748B" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="96" cy="34" r="14" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+              <text x="96" y="39" text-anchor="middle" font-size="14">🖥️</text>
+              <path d="M114 34H128M128 34L123 29M128 34L123 39" stroke="#64748B" stroke-width="2.2" stroke-linecap="round"/>
+              <rect x="134" y="14" width="46" height="40" rx="8" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+              <path d="M144 35L153 43L170 25" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`
+        };
+      }
+
+      // 5. Default Table / Record / Field Illustration
+      return {
+        topic: questionType === "صح_خطأ" ? "✅ صح أم خطأ؟" : "📋 الجداول والسجلات والحقول",
+        svg: `
+          <svg viewBox="0 0 180 68" class="h-full w-auto drop-shadow-sm" fill="none">
+            <rect x="25" y="8" width="130" height="52" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2.5"/>
+            <path d="M25 16C25 11.5817 28.5817 8 33 8H147C151.418 8 155 11.5817 155 16V24H25V16Z" fill="#2563EB"/>
+            <line x1="68" y1="24" x2="68" y2="60" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="112" y1="24" x2="112" y2="60" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="25" y1="42" x2="155" y2="42" stroke="#CBD5E1" stroke-width="2"/>
+            <rect x="27" y="25" width="126" height="16" fill="#DBEAFE" opacity="0.75"/>
+            <rect x="34" y="30" width="26" height="6" rx="3" fill="#1D4ED8"/>
+            <rect x="77" y="30" width="26" height="6" rx="3" fill="#10B981"/>
+            <rect x="120" y="30" width="26" height="6" rx="3" fill="#F59E0B"/>
+            <rect x="34" y="48" width="26" height="6" rx="3" fill="#94A3B8"/>
+            <rect x="77" y="48" width="26" height="6" rx="3" fill="#94A3B8"/>
+            <rect x="120" y="48" width="26" height="6" rx="3" fill="#94A3B8"/>
+          </svg>`
+      };
+    }
+
+    // =========================================================================
+    // 5. RANDOM SELECTION & SHUFFLE LOGIC (15 QUESTIONS BALANCED)
+    // =========================================================================
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickRandom15Questions() {
+      const mcqPool = shuffleArray(questionBank.filter(q => q["النوع"] === "اختيار"));
+      const tfPool = shuffleArray(questionBank.filter(q => q["النوع"] === "صح_خطأ"));
+
+      // Pick a balanced mix (e.g., 8 MCQ + 7 True/False if available)
+      const mcqCount = Math.min(8, mcqPool.length);
+      const tfCount = Math.min(QUIZ_LENGTH - mcqCount, tfPool.length);
+
+      let combined = [
+        ...mcqPool.slice(0, mcqCount),
+        ...tfPool.slice(0, tfCount)
+      ];
+
+      // If total is still less than QUIZ_LENGTH (e.g., custom CSV), fill from remaining
+      if (combined.length < QUIZ_LENGTH) {
+        const remaining = shuffleArray(questionBank.filter(q => !combined.includes(q)));
+        combined.push(...remaining.slice(0, QUIZ_LENGTH - combined.length));
+      }
+
+      return shuffleArray(combined).slice(0, QUIZ_LENGTH);
+    }
+
+    // =========================================================================
+    // 6. QUIZ NAVIGATION & RENDERING
+    // =========================================================================
+    function startQuiz() {
+      const nameInput = document.getElementById("studentNameInput");
+      const errorMsg = document.getElementById("nameErrorMsg");
+      const rawName = nameInput.value.trim();
+
+      if (!rawName) {
+        errorMsg.classList.remove("hidden");
+        nameInput.classList.add("animate-shake", "border-rose-400");
+        playSound("wrong");
+        setTimeout(() => {
+          nameInput.classList.remove("animate-shake");
+        }, 450);
+        nameInput.focus();
+        return;
+      }
+
+      errorMsg.classList.add("hidden");
+      nameInput.classList.remove("border-rose-400");
+      studentName = rawName;
+
+      playSound("click");
+      beginNewRound();
+    }
+
+    function beginNewRound() {
+      selectedQuestions = pickRandom15Questions();
+      currentQuestionIndex = 0;
+      score = 0;
+
+      // Update Header UI
+      document.getElementById("headerStudentName").textContent = studentName;
+      document.getElementById("totalQNum").textContent = selectedQuestions.length;
+      document.getElementById("currentScoreText").textContent = "0";
+
+      // Switch screens
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("resultScreen").classList.add("hidden");
+      document.getElementById("resultScreen").classList.remove("flex");
+
+      const qScreen = document.getElementById("questionScreen");
+      qScreen.classList.remove("hidden");
+      qScreen.classList.add("flex");
+
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      isAnswered = false;
+      const qObj = selectedQuestions[currentQuestionIndex];
+      const qNumber = currentQuestionIndex + 1;
+      const total = selectedQuestions.length;
+
+      // Animate question card transition
+      const qCard = document.getElementById("questionCard");
+      qCard.classList.remove("animate-pop");
+      void qCard.offsetWidth; // trigger reflow
+      qCard.classList.add("animate-pop");
+
+      // Update Progress
+      document.getElementById("currentQNum").textContent = qNumber;
+      const pct = Math.round((qNumber / total) * 100);
+      document.getElementById("progressBar").style.width = `${pct}%`;
+
+      // Update Badges & Illustration
+      const typeBadge = document.getElementById("questionTypeBadge");
+      if (qObj["النوع"] === "اختيار") {
+        typeBadge.textContent = "🔢 اختيار من متعدد";
+        typeBadge.className = "px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200";
+      } else {
+        typeBadge.textContent = "⚖️ صح أم خطأ";
+        typeBadge.className = "px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200";
+      }
+
+      const contextArt = getContextualIllustration(qObj["السؤال"], qObj["النوع"]);
+      document.getElementById("questionTopicBadge").textContent = contextArt.topic;
+      document.getElementById("questionIllustration").innerHTML = contextArt.svg;
+
+      // Question Text
+      document.getElementById("questionText").textContent = qObj["السؤال"];
+
+      // Reset Feedback & Hint
+      document.getElementById("feedbackArea").classList.add("hidden");
+      document.getElementById("preAnswerHint").classList.remove("hidden");
+
+      // Render Options
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+
+      if (qObj["النوع"] === "اختيار") {
+        const listWrapper = document.createElement("div");
+        listWrapper.className = "grid grid-cols-1 gap-2 w-full";
+
+        const arabicLetters = ["أ", "ب", "ج", "د"];
+        for (let i = 1; i <= 4; i++) {
+          const optText = qObj[`الخيار${i}`];
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.dataset.value = String(i);
+          btn.className =
+            "option-btn w-full text-right px-3.5 py-2.5 rounded-2xl bg-slate-50 hover:bg-blue-50/80 active:scale-[0.99] border-2 border-slate-200 hover:border-blue-400 transition flex items-center gap-2.5 group";
+
+          btn.innerHTML = `
+            <span class="opt-badge w-7 h-7 rounded-xl bg-white border border-slate-300 group-hover:border-blue-400 group-hover:bg-blue-600 group-hover:text-white text-slate-700 font-heading font-extrabold text-xs flex items-center justify-center shrink-0 transition">
+              ${arabicLetters[i - 1]}
+            </span>
+            <span class="font-bold text-slate-800 text-xs sm:text-sm leading-snug flex-1">${optText}</span>
+            <span class="opt-status-icon text-base shrink-0"></span>
+          `;
+          btn.onclick = () => handleAnswerSelection(String(i), btn);
+          listWrapper.appendChild(btn);
+        }
+        optionsContainer.appendChild(listWrapper);
+      } else {
+        // True / False (صح / خطأ)
+        const tfGrid = document.createElement("div");
+        tfGrid.className = "grid grid-cols-2 gap-3 w-full py-2";
+
+        const choices = [
+          { value: "صح", label: "صـح", icon: "✅", baseBorder: "border-emerald-200 hover:border-emerald-500 bg-emerald-50/50" },
+          { value: "خطأ", label: "خـطأ", icon: "❌", baseBorder: "border-rose-200 hover:border-rose-500 bg-rose-50/50" }
+        ];
+
+        choices.forEach(item => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.dataset.value = item.value;
+          btn.className = `option-btn py-5 px-3 rounded-2xl border-2 ${item.baseBorder} active:scale-95 transition flex flex-col items-center justify-center gap-1.5 shadow-sm`;
+          btn.innerHTML = `
+            <span class="text-2xl sm:text-3xl">${item.icon}</span>
+            <span class="font-heading font-black text-base sm:text-lg text-slate-800">${item.label}</span>
+            <span class="opt-status-icon text-xs font-bold h-4"></span>
+          `;
+          btn.onclick = () => handleAnswerSelection(item.value, btn);
+          tfGrid.appendChild(btn);
+        });
+
+        optionsContainer.appendChild(tfGrid);
+      }
+    }
+
+    // =========================================================================
+    // 7. ANSWER CHECKING, FEEDBACK & MOTIVATION
+    // =========================================================================
+    function handleAnswerSelection(selectedVal, clickedBtn) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const qObj = selectedQuestions[currentQuestionIndex];
+      const correctVal = String(qObj["الإجابة_الصحيحة"]).trim();
+      const isCorrect = selectedVal === correctVal;
+
+      // Style all option buttons
+      const allBtns = document.querySelectorAll("#optionsContainer .option-btn");
+      allBtns.forEach(btn => {
+        btn.disabled = true;
+        const val = btn.dataset.value;
+        const statusIcon = btn.querySelector(".opt-status-icon");
+
+        if (val === correctVal) {
+          btn.className = btn.className
+            .replace(/bg-\S+/g, "")
+            .replace(/border-\S+/g, "") +
+            " bg-emerald-50 border-2 border-emerald-500 shadow-sm";
+          if (statusIcon) statusIcon.textContent = "✔️";
+        } else if (val === selectedVal && !isCorrect) {
+          btn.className = btn.className
+            .replace(/bg-\S+/g, "")
+            .replace(/border-\S+/g, "") +
+            " bg-rose-50 border-2 border-rose-500 animate-shake";
+          if (statusIcon) statusIcon.textContent = "✖️";
+        } else {
+          btn.classList.add("opacity-55");
+        }
+      });
+
+      // Update Score & Play Effects
+      const feedbackArea = document.getElementById("feedbackArea");
+      const feedbackTitle = document.getElementById("feedbackTitle");
+      const feedbackExplanation = document.getElementById("feedbackExplanation");
+
+      if (isCorrect) {
+        score++;
+        document.getElementById("currentScoreText").textContent = String(score);
+        playSound("correct");
+        launchConfetti(28);
+
+        const phrase = POSITIVE_PHRASES[Math.floor(Math.random() * POSITIVE_PHRASES.length)];
+        feedbackTitle.textContent = phrase;
+        feedbackTitle.className = "font-heading font-extrabold text-xs sm:text-sm text-emerald-800";
+        feedbackArea.className = "shrink-0 rounded-2xl p-2.5 sm:p-3 border-2 border-emerald-300 bg-emerald-50/90 animate-pop";
+      } else {
+        playSound("wrong");
+        const phrase = ENCOURAGING_PHRASES[Math.floor(Math.random() * ENCOURAGING_PHRASES.length)];
+        feedbackTitle.textContent = phrase;
+        feedbackTitle.className = "font-heading font-extrabold text-xs sm:text-sm text-amber-900";
+        feedbackArea.className = "shrink-0 rounded-2xl p-2.5 sm:p-3 border-2 border-amber-300 bg-amber-50/95 animate-pop";
+      }
+
+      feedbackExplanation.textContent = qObj["الشرح"] || "";
+
+      // Update Next button text
+      const nextBtnLabel = document.getElementById("nextBtnLabel");
+      if (currentQuestionIndex === selectedQuestions.length - 1) {
+        nextBtnLabel.textContent = "عرض الشهادة 🏆";
+      } else {
+        nextBtnLabel.textContent = "السؤال التالي";
+      }
+
+      // Show Feedback, hide pre-answer hint
+      document.getElementById("preAnswerHint").classList.add("hidden");
+      feedbackArea.classList.remove("hidden");
+    }
+
+    function goToNextQuestion() {
+      playSound("click");
+      if (currentQuestionIndex < selectedQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+      } else {
+        showCertificateScreen();
+      }
+    }
+
+    // =========================================================================
+    // 8. FINAL SCORE & CERTIFICATE SCREEN
+    // =========================================================================
+    function showCertificateScreen() {
+      document.getElementById("questionScreen").classList.add("hidden");
+      document.getElementById("questionScreen").classList.remove("flex");
+
+      const resScreen = document.getElementById("resultScreen");
+      resScreen.classList.remove("hidden");
+      resScreen.classList.add("flex");
+
+      const total = selectedQuestions.length;
+      const percent = Math.round((score / total) * 100);
+
+      // Populate Student Name & Scores
+      document.getElementById("certStudentName").textContent = studentName;
+      document.getElementById("finalScoreFraction").textContent = `${score} / ${total}`;
+      document.getElementById("finalScorePercent").textContent = `${percent}%`;
+
+      // Calculate Stars (1 to 5) & Badge Title
+      let starsCount = 1;
+      let badgeText = "🌱 مكتشف البيانات الواعد";
+      let encouragement = "بداية طيبة يا بطل! أعد المحاولة لتكتشف المزيد من أسرار قواعد البيانات.";
+
+      if (score >= 14) {
+        starsCount = 5;
+        badgeText = "👑 خبير قواعد البيانات الأسطوري";
+        encouragement = "إنجاز مبهر! لقد أتقنت جميع مهارات الجداول الإلكترونية والفرز والتصفية بامتياز!";
+      } else if (score >= 12) {
+        starsCount = 4;
+        badgeText = "🌟 مهندس بيانات متميز";
+        encouragement = "مستوى رائع جداً يا بطل الصف السادس! خطوة واحدة تفصلك عن العلامة الكاملة.";
+      } else if (score >= 9) {
+        starsCount = 3;
+        badgeText = "🚀 محلل جداول ذكي";
+        encouragement = "أحسنت! لديك فهم جيد جداً لقواعد البيانات والسجلات والحقول.";
+      } else if (score >= 6) {
+        starsCount = 2;
+        badgeText = "💡 باحث بيانات مجتهد";
+        encouragement = "محاولة جميلة! راجع الشروحات وجرب جولة جديدة لتحصد النجوم الخمس.";
+      }
+
+      document.getElementById("certBadgeTitle").textContent = badgeText;
+      document.getElementById("certEncouragement").textContent = encouragement;
+
+      // Render Animated Stars
+      const starsContainer = document.getElementById("starsContainer");
+      starsContainer.innerHTML = "";
+      for (let i = 1; i <= 5; i++) {
+        const span = document.createElement("span");
+        span.className = "inline-block opacity-0 star-anim";
+        span.style.animationDelay = `${i * 0.12}s`;
+        span.textContent = i <= starsCount ? "⭐" : "☆";
+        if (i > starsCount) {
+          span.classList.add("text-slate-300");
+        }
+        starsContainer.appendChild(span);
+      }
+
+      playSound("fanfare");
+      launchConfetti(85);
+    }
+
+    function retryQuizWithNewQuestions() {
+      playSound("click");
+      beginNewRound();
+    }
+
+    function backToStartScreen() {
+      playSound("click");
+      document.getElementById("resultScreen").classList.add("hidden");
+      document.getElementById("resultScreen").classList.remove("flex");
+      document.getElementById("startScreen").classList.remove("hidden");
+    }
+
+    // =========================================================================
+    // 9. OPTIONAL CSV PARSER (NOTEBOOKLM / CUSTOM CSV UPLOAD)
+    // =========================================================================
+    function parseCSVLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === "," && !inQuotes) {
+          result.push(current.trim());
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    function handleCSVUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        const imported = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          if (cols.length < 7) continue;
+          // Skip header row
+          if (cols[0] === "النوع" || cols[1] === "السؤال") continue;
+
+          imported.push({
+            "النوع": cols[0],
+            "السؤال": cols[1],
+            "الخيار1": cols[2] || "",
+            "الخيار2": cols[3] || "",
+            "الخيار3": cols[4] || "",
+            "الخيار4": cols[5] || "",
+            "الإجابة_الصحيحة": cols[6],
+            "الشرح": cols[7] || ""
+          });
+        }
+
+        if (imported.length > 0) {
+          questionBank = imported;
+          document.getElementById("totalBankCount").textContent = String(questionBank.length);
+          document.getElementById("questionBankStatus").innerHTML =
+            `✅ تم تحميل الملف بنجاح: <strong class="text-emerald-600">${questionBank.length}</strong> سؤالاً`;
+          playSound("correct");
+          launchConfetti(30);
+        }
+      };
+      reader.readAsText(file, "UTF-8");
+    }
+
+    // =========================================================================
+    // 10. LIGHTWEIGHT CONFETTI ENGINE
+    // =========================================================================
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let animFrameId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti(count = 40) {
+      const colors = ["#2563EB", "#10B981", "#F59E0B", "#EC4899", "#8B5CF6", "#06B6D4"];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: window.innerWidth / 2 + (Math.random() - 0.5) * 140,
+          y: window.innerHeight * 0.35,
+          vx: (Math.random() - 0.5) * 10,
+          vy: -(Math.random() * 8 + 3),
+          size: Math.random() * 7 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 10,
+          alpha: 1
+        });
+      }
+      if (!animFrameId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.25; // gravity
+        p.rotation += p.vr;
+        p.alpha -= 0.012;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+        ctx.restore();
+      });
+
+      particles = particles.filter(p => p.alpha > 0 && p.y < canvas.height + 20);
+
+      if (particles.length > 0) {
+        animFrameId = requestAnimationFrame(animateConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        animFrameId = null;
+      }
+    }
+  </script>
+</body>
+</html>
